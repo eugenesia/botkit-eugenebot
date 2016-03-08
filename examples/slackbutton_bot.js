@@ -4,6 +4,8 @@
           \ \  __<   \ \ \/\ \  \/_/\ \/ \ \  _"-.  \ \ \  \/_/\ \/
            \ \_____\  \ \_____\    \ \_\  \ \_\ \_\  \ \_\    \ \_\
             \/_____/   \/_____/     \/_/   \/_/\/_/   \/_/     \/_/
+
+
 This is a sample Slack Button application that adds a bot to one or many slack teams.
 
 # RUN THE APP:
@@ -125,7 +127,7 @@ controller.storage.teams.all(function(err,teams) {
   // connect all teams with bots up to slack!
   for (var t  in teams) {
     if (teams[t].bot) {
-      var bot = controller.spawn(teams[t]).startRTM(function(err) {
+      controller.spawn(teams[t]).startRTM(function(err, bot) {
         if (err) {
           console.log('Error connecting bot to Slack:',err);
         } else {

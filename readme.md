@@ -1,5 +1,9 @@
 # [Botkit](http://howdy.ai/botkit) - Building Blocks for Building Bots
 
+[![npm](https://img.shields.io/npm/v/botkit.svg)](https://www.npmjs.com/package/botkit)
+[![David](https://img.shields.io/david/howdyai/botkit.svg)](https://david-dm.org/howdyai/botkit)
+[![npm](https://img.shields.io/npm/l/botkit.svg)](https://spdx.org/licenses/MIT)
+
 Botkit designed to ease the process of designing and running useful, creative or just plain weird bots (and other types of applications) that live inside [Slack](http://slack.com)!
 
 It provides a semantic interface to sending and receiving messages
@@ -142,6 +146,8 @@ These examples are included in the Botkit [Github repo](https://github.com/howdy
 [examples/slackbutton_bot.js](https://github.com/howdyai/botkit/blob/master/examples/slackbutton_bot.js) an example of using the Slack Button to offer a bot integration.
 
 [examples/slackbutton_incomingwebhooks.js](https://github.com/howdyai/botkit/blob/master/examples/slackbutton_incomingwebhooks.js) an example of using the Slack Button to offer an incoming webhook integration. This example also includes a simple form which allows you to broadcast a message to any team who adds the integration.
+
+[example/sentiment_analysis.js](https://github.com/howdyai/botkit/blob/master/examples/sentiment_analysis.js) a simple example of a chatbot using sentiment analysis. Keeps a running score of each user based on positive and negative keywords. Messages and thresholds can be configured. 
 
 # Developing with Botkit
 
@@ -367,7 +373,7 @@ on the type and number of messages that will be sent.
 
 Single message replies to incoming commands can be sent using the `bot.reply()` function.
 
-Multi-message replies, particulary those that present questions for the end user to respond to,
+Multi-message replies, particularly those that present questions for the end user to respond to,
 can be sent using the `bot.startConversation()` function and the related conversation sub-functions.
 
 Bots can originate messages - that is, send a message based on some internal logic or external stimulus -
@@ -654,7 +660,7 @@ askSize = function(response, convo) {
 }
 askWhereDeliver = function(response, convo) {
   convo.ask('So where do you want it delivered?', function(response, convo) {
-    convo.say('Ok! Good by.');
+    convo.say('Ok! Good bye.');
     convo.next();
   });
 }
@@ -788,6 +794,7 @@ bot.sendWebhook({
 
 // receive outgoing or slash commands
 // if you are already using Express, you can use your own server instance...
+// see "Use BotKit with an Express web server"
 controller.setupWebserver(process.env.port,function(err,webserver) {
 
   controller.createWebhookEndpoints(controller.webserver);
@@ -1166,6 +1173,11 @@ bot.identifyBot(function(err,identity) {
 | create_user |
 | update_user |
 | oauth_error |
+
+##Use BotKit with an Express web server
+Instead of controller.setupWebserver(), it is possible to use a different web server to manage authentication flows, as well as serving web pages.
+
+Here is an example of [using an Express web server alongside BotKit](https://github.com/mvaragnat/botkit-express-demo).
 
 # Chat with us at dev4slack.slack.com
 You can get an invite here: http://dev4slack.xoxco.com/.
