@@ -101,7 +101,7 @@ controller.middleware.receive.use(apiai.receive);
 controller.hears(['Default Welcome Intent'], 'direct_message,direct_mention,mention', apiai.hears, function(bot, message) {
   console.log(JSON.stringify(message));
   console.log('hello');
-  bot.reply(message, 'Hello!');
+  // bot.reply(message, 'Hello!');
   bot.reply(message, message.fulfillment.speech);
 });
 
