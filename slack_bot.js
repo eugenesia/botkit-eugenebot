@@ -63,20 +63,14 @@ This bot demonstrates many of the core features of Botkit:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
-if (! (process.env.SLACK_TOKEN && process.env.APIAI_TOKEN)) {
-  console.log('Error: Specify tokens in environment');
-  process.exit(1);
-}
-
-const slackToken = process.env.SLACK_TOKEN;
-const apiaiToken = process.env.APIAI_TOKEN;
+// Config and credentials.
+const config = require('./config');
 
 const os = require('os');
 const Botkit = require('./lib/Botkit.js');
 
 const apiai = require('botkit-middleware-apiai')({
-  token: apiaiToken,
+  token: config.apiaiToken,
 
   // or false. If true, the middleware don't send the bot reply/says to api.ai
   skip_bot: false,
@@ -88,13 +82,10 @@ const controller = Botkit.slackbot({
 
 // Spawn the Slack bot.
 const bot = controller.spawn({
-  token: slackToken,
+  token: config.slackToken,
 }).startRTM();
 
 controller.middleware.receive.use(apiai.receive);
-
-
-
 
 
 /* note this uses example middlewares defined above */
@@ -114,7 +105,10 @@ controller.hears(['Happy new year'], 'direct_message,direct_mention,mention', ap
 
 var cleverbotIo = require('cleverbot.io');
 
-var cleverbot = new cleverbotIo('KHfUi4TOfYsJysRt', 'gY1qvsUZqDBg767CSndp9iKpJQohXyTM');
+var cleverbot = new cleverbotIo(
+  config.cleverbot.apiUser, config.cleverbot.apiKey
+);
+
 cleverbot.setNick('Eugene Bot');
 cleverbot.create(function (err, session) {
   if (err) {
