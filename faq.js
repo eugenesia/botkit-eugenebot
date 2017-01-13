@@ -23,3 +23,20 @@ module.exports.search = (term, callback) => {
   });
 }
 
+// Find a single FAQ by ArticleNumber (integer).
+// Callback is a function in the form function (err, result).
+module.exports.findByArticleNumber = (articleNumber, callback) => {
+
+  // Left-pad ArticleNumber with zeros to create a 9-digit int as a string.
+  articleNumber = '000000000' + String(articleNumber);
+  articleNumber = articleNumber.substr(-9);
+
+  let query = 'SELECT Id, ArticleNumber, Title, Summary, Solution__c FROM FAQ__kav '
+    + "WHERE Language = 'en_US' AND PublishStatus = 'Online'"
+    + `AND ArticleNumber = '${articleNumber}'`;
+
+  conn.query(query, function(err, result) {
+    callback(err, result);
+  });
+}
+

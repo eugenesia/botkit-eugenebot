@@ -284,6 +284,31 @@ controller.hears('search faq for (.*)', 'direct_message,direct_mention,mention',
   }
 );
 
+// Find a single FAQ by ArticleNumber.
+controller.hears('show faq ([0-9]{1,9})', 'direct_message,direct_mention,mention',
+  (bot, message) => {
+    faqHelper.findByArticleNumber(message.match[1], (err, result) => {
+
+      let reply = '';
+
+      if (result.totalSize > 0) {
+
+        // Grab the first record as we are only expecting one FAQ.
+        let record = result.records[0];
+
+        reply = `*ArticleNumber:* ${record.ArticleNumber}\n`
+          + `*Title:* ${record.Title}\n`
+          + `*Summary:* ${record.Summary}\n\n`
+          + `*Solution:*\n ${record.Solution__c}`;
+      }
+      else {
+        reply = "Sorry, FAQ doesn't exist.";
+      }
+      bot.reply(message, reply);
+    });
+  }
+);
+
 
 // Pass other messages to cleverbot.
 
