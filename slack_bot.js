@@ -90,6 +90,83 @@ const bot = controller.spawn({
 controller.middleware.receive.use(apiai.receive);
 
 
+
+// Search for FAQs by search term.
+const faqHelper = require('./faq');
+
+controller.hears('search faq for (.+)', 'direct_message,direct_mention,mention',
+  (bot, message) => {
+
+    let term = message.match[1];
+    // Replace mentions e.g. @username.
+    term = term.replace(/<@\w+>/g, '');
+
+    bot.reply(message, `Searching FAQ for ${term}`);
+    faqHelper.search(term, (err, result) => {
+
+      let total = result.searchRecords.length;
+
+      let reply = `${total} FAQs found. Showing up to top 5 results:\n\n`
+        // Blockquote the article details.
+        + '>>> \n';
+
+      // Append details of first 5 records.
+      for (let i=0; i<Math.min(total, 5); i++) {
+
+        let record = result.searchRecords[i];
+
+        reply += `*ArticleNumber:* ${record.ArticleNumber}\n`
+          + `*Title:* ${record.Title}\n`
+          + `*Summary:* ${record.Summary}\n\n`;
+      }
+      bot.reply(message, reply);
+    });
+  }
+);
+
+// Find a single FAQ by ArticleNumber.
+const sanitizeHtml = require('sanitize-html');
+controller.hears('show faq ([0-9]{1,9})', 'direct_message,direct_mention,mention',
+  (bot, message) => {
+
+    let articleNum = message.match[1];
+    bot.reply(message, `Finding FAQ ${articleNum}`);
+
+    faqHelper.findByArticleNumber(articleNum, (err, result) => {
+
+      let reply = '';
+
+      if (result.totalSize > 0) {
+
+        // Grab the first record as we are only expecting one FAQ.
+        let record = result.records[0];
+
+        // Strip HTML from Solution.
+        let solution = sanitizeHtml(record.Solution__c, {
+          allowedTags: [],
+          parser: {
+            // Decode entities as Slack allows them.
+            decodeEntities: true,
+          },
+        });
+
+        reply = `*ArticleNumber:* ${record.ArticleNumber}\n`
+          + `*Title:* ${record.Title}\n`
+          + `*Summary:* ${record.Summary}\n\n`
+          + `*Solution:*\n ${solution}`;
+      }
+      else {
+        reply = "Sorry, FAQ doesn't exist.";
+      }
+      bot.reply(message, reply);
+    });
+  }
+);
+
+
+
+
+
 /* note this uses example middlewares defined above */
 controller.hears(['Default Welcome Intent'], 'direct_message,direct_mention,mention', apiai.hears, function(bot, message) {
   console.log(JSON.stringify(message));
@@ -250,84 +327,12 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
        '>. I have been running for ' + uptime + ' on ' + hostname + '.');
   });
 
-controller.hears(['(daeus|doris)'], 'direct_message,direct_mention,mention', function(bot, message) {
+controller.hears(['(daeus|doris|shyam)'], 'direct_message,direct_mention,mention', function(bot, message) {
   var name = message.match[1];
   // Capitalize first letter.
   name = name.charAt(0).toUpperCase() + name.slice(1);
   bot.reply(message, name + ' is awesome!');
 });
-
-
-const faqHelper = require('./faq');
-
-controller.hears('search faq for (.+)', 'direct_message,direct_mention,mention',
-  (bot, message) => {
-
-    let term = message.match[1];
-    // Replace mentions e.g. @username.
-    term = term.replace(/<@\w+>/g, '');
-
-    bot.reply(message, `Searching FAQ for ${term}`);
-    faqHelper.search(term, (err, result) => {
-
-      let total = result.searchRecords.length;
-
-      let reply = `${total} FAQs found. Showing up to top 5 results:\n\n`
-        // Blockquote the article details.
-        + '>>> \n';
-
-      // Append details of first 5 records.
-      for (let i=0; i<Math.min(total, 5); i++) {
-
-        let record = result.searchRecords[i];
-
-        reply += `*ArticleNumber:* ${record.ArticleNumber}\n`
-          + `*Title:* ${record.Title}\n`
-          + `*Summary:* ${record.Summary}\n\n`;
-      }
-      bot.reply(message, reply);
-    });
-  }
-);
-
-// Find a single FAQ by ArticleNumber.
-const sanitizeHtml = require('sanitize-html');
-controller.hears('show faq ([0-9]{1,9})', 'direct_message,direct_mention,mention',
-  (bot, message) => {
-
-    let articleNum = message.match[1];
-    bot.reply(message, `Searching for FAQ ${articleNum}`);
-
-    faqHelper.findByArticleNumber(articleNum, (err, result) => {
-
-      let reply = '';
-
-      if (result.totalSize > 0) {
-
-        // Grab the first record as we are only expecting one FAQ.
-        let record = result.records[0];
-
-        // Strip HTML from Solution.
-        let solution = sanitizeHtml(record.Solution__c, {
-          allowedTags: [],
-          parser: {
-            // Decode entities as Slack allows them.
-            decodeEntities: true,
-          },
-        });
-
-        reply = `*ArticleNumber:* ${record.ArticleNumber}\n`
-          + `*Title:* ${record.Title}\n`
-          + `*Summary:* ${record.Summary}\n\n`
-          + `*Solution:*\n ${solution}`;
-      }
-      else {
-        reply = "Sorry, FAQ doesn't exist.";
-      }
-      bot.reply(message, reply);
-    });
-  }
-);
 
 
 // Pass other messages to cleverbot.
