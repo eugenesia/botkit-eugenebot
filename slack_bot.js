@@ -94,7 +94,7 @@ controller.middleware.receive.use(apiai.receive);
 // Search for FAQs by search term.
 const faqHelper = require('./faq');
 
-controller.hears('search faq for (.+)', 'direct_message,direct_mention,mention',
+controller.hears('search faqs? for (.+)', 'direct_message,direct_mention,mention',
   (bot, message) => {
 
     let term = message.match[1];
@@ -126,7 +126,7 @@ controller.hears('search faq for (.+)', 'direct_message,direct_mention,mention',
 
 // Find a single FAQ by ArticleNumber.
 const sanitizeHtml = require('sanitize-html');
-controller.hears('(find|show) faq ([0-9]{1,9})', 'direct_message,direct_mention,mention',
+controller.hears('(find|show) faqs? ([0-9]{1,9})', 'direct_message,direct_mention,mention',
   (bot, message) => {
 
     let articleNum = message.match[2];
