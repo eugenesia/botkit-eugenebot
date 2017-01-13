@@ -260,9 +260,15 @@ controller.hears(['(daeus|doris)'], 'direct_message,direct_mention,mention', fun
 
 const faqHelper = require('./faq');
 
-controller.hears('search faq for (.*)', 'direct_message,direct_mention,mention',
+controller.hears('search faq for (.+)', 'direct_message,direct_mention,mention',
   (bot, message) => {
-    faqHelper.search(message.match[1], (err, result) => {
+
+    let term = message.match[1];
+    // Replace mentions e.g. @username.
+    term = term.replace(/<@\w+>/g, '');
+
+    bot.reply(message, `Searching FAQ for ${term}`);
+    faqHelper.search(term, (err, result) => {
 
       let total = result.searchRecords.length;
 
@@ -285,9 +291,14 @@ controller.hears('search faq for (.*)', 'direct_message,direct_mention,mention',
 );
 
 // Find a single FAQ by ArticleNumber.
+const sanitizeHtml = require('sanitize-html');
 controller.hears('show faq ([0-9]{1,9})', 'direct_message,direct_mention,mention',
   (bot, message) => {
-    faqHelper.findByArticleNumber(message.match[1], (err, result) => {
+
+    let articleNum = message.match[1];
+    bot.message(message, `Searching for FAQ ${articleNum}`);
+
+    faqHelper.findByArticleNumber(articleNum, (err, result) => {
 
       let reply = '';
 
@@ -296,10 +307,15 @@ controller.hears('show faq ([0-9]{1,9})', 'direct_message,direct_mention,mention
         // Grab the first record as we are only expecting one FAQ.
         let record = result.records[0];
 
+        // Strip HTML from Solution.
+        let solution = sanitizeHtml(record.Solution__c, {
+          allowedTags: [],
+        });
+
         reply = `*ArticleNumber:* ${record.ArticleNumber}\n`
           + `*Title:* ${record.Title}\n`
           + `*Summary:* ${record.Summary}\n\n`
-          + `*Solution:*\n ${record.Solution__c}`;
+          + `*Solution:*\n ${solution}`;
       }
       else {
         reply = "Sorry, FAQ doesn't exist.";
