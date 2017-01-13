@@ -310,6 +310,10 @@ controller.hears('show faq ([0-9]{1,9})', 'direct_message,direct_mention,mention
         // Strip HTML from Solution.
         let solution = sanitizeHtml(record.Solution__c, {
           allowedTags: [],
+          parser: {
+            // Decode entities as Slack allows them.
+            decodeEntities: true,
+          },
         });
 
         reply = `*ArticleNumber:* ${record.ArticleNumber}\n`
