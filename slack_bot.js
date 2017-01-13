@@ -272,7 +272,7 @@ controller.hears('search faq for (.+)', 'direct_message,direct_mention,mention',
 
       let total = result.searchRecords.length;
 
-      let reply = `${total} FAQs found. Showing top 5 results:\n\n`
+      let reply = `${total} FAQs found. Showing up to top 5 results:\n\n`
         // Blockquote the article details.
         + '>>> \n';
 
