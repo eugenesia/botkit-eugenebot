@@ -168,18 +168,6 @@ controller.hears('(find|show) faq ([0-9]{1,9})', 'direct_message,direct_mention,
 
 
 /* note this uses example middlewares defined above */
-controller.hears(['Default Welcome Intent'], 'direct_message,direct_mention,mention', apiai.hears, function(bot, message) {
-  console.log(JSON.stringify(message));
-  console.log('hello');
-  // bot.reply(message, 'Hello!');
-  bot.reply(message, message.fulfillment.speech);
-});
-
-
-controller.hears(['Happy new year'], 'direct_message,direct_mention,mention', apiai.hears, function(bot, message) {
-  bot.reply(message, message.fulfillment.speech);
-});
-
 
 
 /*
@@ -333,6 +321,21 @@ controller.hears(['(daeus|doris|shyam)'], 'direct_message,direct_mention,mention
   name = name.charAt(0).toUpperCase() + name.slice(1);
   bot.reply(message, name + ' is awesome!');
 });
+
+
+// Reply to hello/welcome messages.
+controller.hears(['Default Welcome Intent'], 'direct_message,direct_mention,mention', apiai.hears, function(bot, message) {
+  console.log(JSON.stringify(message));
+  console.log('hello');
+  // bot.reply(message, 'Hello!');
+  bot.reply(message, message.fulfillment.speech);
+});
+
+
+controller.hears(['Happy new year'], 'direct_message,direct_mention,mention', apiai.hears, function(bot, message) {
+  bot.reply(message, message.fulfillment.speech);
+});
+
 
 
 // Pass other messages to cleverbot.
