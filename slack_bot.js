@@ -126,10 +126,10 @@ controller.hears('search faq for (.+)', 'direct_message,direct_mention,mention',
 
 // Find a single FAQ by ArticleNumber.
 const sanitizeHtml = require('sanitize-html');
-controller.hears('show faq ([0-9]{1,9})', 'direct_message,direct_mention,mention',
+controller.hears('(find|show) faq ([0-9]{1,9})', 'direct_message,direct_mention,mention',
   (bot, message) => {
 
-    let articleNum = message.match[1];
+    let articleNum = message.match[2];
     bot.reply(message, `Finding FAQ ${articleNum}`);
 
     faqHelper.findByArticleNumber(articleNum, (err, result) => {
@@ -150,7 +150,7 @@ controller.hears('show faq ([0-9]{1,9})', 'direct_message,direct_mention,mention
           },
         });
 
-        reply = `*ArticleNumber:* ${record.ArticleNumber}\n`
+        reply = `>>> \n *ArticleNumber:* ${record.ArticleNumber}\n`
           + `*Title:* ${record.Title}\n`
           + `*Summary:* ${record.Summary}\n\n`
           + `*Solution:*\n ${solution}`;
