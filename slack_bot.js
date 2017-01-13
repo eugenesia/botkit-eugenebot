@@ -63,6 +63,8 @@ This bot demonstrates many of the core features of Botkit:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+'use strict';
+
 // Config and credentials.
 const config = require('./config');
 
@@ -77,7 +79,7 @@ const apiai = require('botkit-middleware-apiai')({
 });
 
 const controller = Botkit.slackbot({
-  debug: true,
+  debug: config.debug,
 });
 
 // Spawn the Slack bot.
@@ -101,23 +103,6 @@ controller.hears(['Happy new year'], 'direct_message,direct_mention,mention', ap
   bot.reply(message, message.fulfillment.speech);
 });
 
-
-
-var cleverbotIo = require('cleverbot.io');
-
-var cleverbot = new cleverbotIo(
-  config.cleverbot.apiUser, config.cleverbot.apiKey
-);
-
-cleverbot.setNick('Eugene Bot');
-cleverbot.create(function (err, session) {
-  if (err) {
-    console.log('cleverbot create fail.');
-  }
-  else {
-    console.log('cleverbot create success.');
-  }
-});
 
 
 /*
@@ -273,8 +258,51 @@ controller.hears(['(daeus|doris)'], 'direct_message,direct_mention,mention', fun
 });
 
 
+const faqHelper = require('./faq');
+
+controller.hears('search faq for (.*)', 'direct_message,direct_mention,mention',
+  (bot, message) => {
+    faqHelper.search(message.match[1], (err, result) => {
+
+      let total = result.searchRecords.length;
+
+      let reply = `${total} FAQs found. Showing top 5 results:\n\n`
+        // Blockquote the article details.
+        + '>>> \n';
+
+      // Append details of first 5 records.
+      for (let i=0; i<Math.min(total, 5); i++) {
+
+        let record = result.searchRecords[i];
+
+        reply += `*ArticleNumber:* ${record.ArticleNumber}\n`
+          + `*Title:* ${record.Title}\n`
+          + `*Summary:* ${record.Summary}\n\n`;
+      }
+      bot.reply(message, reply);
+    });
+  }
+);
+
 
 // Pass other messages to cleverbot.
+
+const cleverbotIo = require('cleverbot.io');
+
+const cleverbot = new cleverbotIo(
+  config.cleverbot.apiUser, config.cleverbot.apiKey
+);
+
+cleverbot.setNick('Eugene Bot');
+cleverbot.create(function (err, session) {
+  if (err) {
+    console.log('cleverbot create fail.');
+  }
+  else {
+    console.log('cleverbot create success.');
+  }
+});
+
 controller.hears('.*','direct_message,direct_mention,mention',function(bot,message) {  
   var msg = message.text;
   cleverbot.ask(msg, function (err, response) {
