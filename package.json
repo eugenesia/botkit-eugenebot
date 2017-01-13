@@ -17,6 +17,7 @@
     "express": "^4.13.3",
     "https-proxy-agent": "^1.0.0",
     "jfs": "^0.2.6",
+    "jsforce": "^1.7.1",
     "localtunnel": "^1.8.1",
     "md5": "^2.1.0",
     "mustache": "^2.2.1",
