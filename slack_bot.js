@@ -296,7 +296,7 @@ controller.hears('show faq ([0-9]{1,9})', 'direct_message,direct_mention,mention
   (bot, message) => {
 
     let articleNum = message.match[1];
-    bot.message(message, `Searching for FAQ ${articleNum}`);
+    bot.reply(message, `Searching for FAQ ${articleNum}`);
 
     faqHelper.findByArticleNumber(articleNum, (err, result) => {
 
