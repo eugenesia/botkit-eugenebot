@@ -1,6 +1,9 @@
 // Configuration and credentials.
 
 exports = {
+  // Whether to output debug messages.
+  debug: false,
+
   // Token for Slack bot.
   slackToken: '',
 
