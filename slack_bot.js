@@ -104,21 +104,29 @@ controller.hears('search faqs? for (.+)', 'direct_message,direct_mention,mention
     bot.reply(message, `Searching FAQ for ${term}`);
     faqHelper.search(term, (err, result) => {
 
-      let total = result.searchRecords.length;
+      let reply = '';
 
-      let reply = `${total} FAQs found. Showing up to top 5 results:\n\n`
-        // Blockquote the article details.
-        + '>>> \n';
-
-      // Append details of first 5 records.
-      for (let i=0; i<Math.min(total, 5); i++) {
-
-        let record = result.searchRecords[i];
-
-        reply += `*ArticleNumber:* ${record.ArticleNumber}\n`
-          + `*Title:* ${record.Title}\n`
-          + `*Summary:* ${record.Summary}\n\n`;
+      if (err) {
+        reply = 'Sorry, there was an error: \n>>> \n' + err.toString();
       }
+      else {
+        let total = result.searchRecords.length;
+
+        reply = `${total} FAQs found. Showing up to top 5 results:\n\n`
+          // Blockquote the article details.
+          + '>>> \n';
+
+        // Append details of first 5 records.
+        for (let i=0; i<Math.min(total, 5); i++) {
+
+          let record = result.searchRecords[i];
+
+          reply += `*ArticleNumber:* ${record.ArticleNumber}\n`
+            + `*Title:* ${record.Title}\n`
+            + `*Summary:* ${record.Summary}\n\n`;
+        }
+      }
+
       bot.reply(message, reply);
     });
   }
