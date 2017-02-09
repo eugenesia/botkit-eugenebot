@@ -385,7 +385,7 @@ controller.hears(['search spotify for (.+)'], 'direct_message,direct_mention,men
 
     // Create a reply with attachments.
     let replyWithAttachments = {
-      text: 'Found tracks with query "' + query + '":',
+      text: 'Found Spotify tracks with text "' + query + '":',
       attachments: [],
     };
 
