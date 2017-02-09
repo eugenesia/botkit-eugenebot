@@ -395,8 +395,8 @@ controller.hears(['search spotify for (.+)'], 'direct_message,direct_mention,men
         title: track.artistName,
         title_link: track.trackUrl,
         thumb_url: track.thumbUrl,
-        text: '<' + track.trackUrl + '|' + track.trackName + '>'
-          + '\n' + track.albumName,
+        text: '<' + track.trackUrl + '|' + track.trackName + '>',
+        footer: track.albumName,
       });
     });
 
