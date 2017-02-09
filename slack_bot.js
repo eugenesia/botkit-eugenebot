@@ -92,6 +92,38 @@ const bot = controller.spawn({
 controller.middleware.receive.use(apiai.receive);
 
 
+// Search Spotify for songs.
+controller.hears(['search spotify for (.+)'], 'direct_message,direct_mention,mention', function(bot, message) {
+
+  // Search term e.g. 'love'
+  let query = message.match[1];
+  spotify.searchTracks(query, function(err, tracks) {
+    if (err) {
+      console.log('Error searching spotify', err);
+      return;
+    }
+
+    // Create a reply with attachments.
+    let replyWithAttachments = {
+      text: 'Found Spotify tracks with text "' + query + '":',
+      attachments: [],
+    };
+
+    tracks.forEach(function(track, index) {
+      // Add a new attachment.
+      replyWithAttachments.attachments.push({
+        title: track.artistName,
+        title_link: track.trackUrl,
+        thumb_url: track.thumbUrl,
+        text: '<' + track.trackUrl + '|' + track.trackName + '>',
+        footer: track.albumName,
+      });
+    });
+
+    bot.reply(message, replyWithAttachments);
+  });
+});
+
 
 // Search for FAQs by search term.
 const faqHelper = require('./faq');
@@ -372,38 +404,6 @@ controller.hears(['Default Welcome Intent'], 'direct_message,direct_mention,ment
 controller.hears(['Happy new year'], 'direct_message,direct_mention,mention', apiai.hears, function(bot, message) {
   bot.reply(message, message.fulfillment.speech);
 });
-
-controller.hears(['search spotify for (.+)'], 'direct_message,direct_mention,mention', function(bot, message) {
-
-  // Search term e.g. 'love'
-  let query = message.match[1];
-  spotify.searchTracks(query, function(err, tracks) {
-    if (err) {
-      console.log('Error searching spotify', err);
-      return;
-    }
-
-    // Create a reply with attachments.
-    let replyWithAttachments = {
-      text: 'Found Spotify tracks with text "' + query + '":',
-      attachments: [],
-    };
-
-    tracks.forEach(function(track, index) {
-      // Add a new attachment.
-      replyWithAttachments.attachments.push({
-        title: track.artistName,
-        title_link: track.trackUrl,
-        thumb_url: track.thumbUrl,
-        text: '<' + track.trackUrl + '|' + track.trackName + '>',
-        footer: track.albumName,
-      });
-    });
-
-    bot.reply(message, replyWithAttachments);
-  });
-});
-
 
 
 // Pass other messages to cleverbot.
