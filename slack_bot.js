@@ -345,7 +345,7 @@ function randomPraise(name) {
 
 
 // Look for user names and praise them.
-controller.hears(['(doris|daeus|shyam)'], 'direct_message,direct_mention,mention', function(bot, message) {
+controller.hears(['(doris|daeus|shyam|nicolo)'], 'direct_message,direct_mention,mention', function(bot, message) {
   var name = message.match[1];
   // Capitalize first letter.
   name = name.charAt(0).toUpperCase() + name.slice(1);
