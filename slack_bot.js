@@ -368,6 +368,7 @@ function randomPraise(name) {
     ' is fantastic!',
     ' really makes my day!',
     ' is extraordinary!',
+    ' est tres cool!',
   ];
 
   var index = Math.floor(Math.random() * praiseSuffixes.length);
@@ -377,8 +378,9 @@ function randomPraise(name) {
 
 
 // Look for user names and praise them.
-controller.hears(['(doris|daeus|shyam|nicolo)'], 'direct_message,direct_mention,mention', function(bot, message) {
-  var name = message.match[1];
+controller.hears(['(what do you think of|do you like|how is) (doris|daeus|shyam|nicolo)'],
+  'direct_message,direct_mention,mention', function(bot, message) {
+  var name = message.match[2];
   // Capitalize first letter.
   name = name.charAt(0).toUpperCase() + name.slice(1);
   bot.reply(message, randomPraise(name));
