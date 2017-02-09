@@ -71,6 +71,8 @@ const config = require('./config');
 const os = require('os');
 const Botkit = require('./lib/Botkit.js');
 
+const spotify = require('./spotify');
+
 const apiai = require('botkit-middleware-apiai')({
   token: config.apiaiToken,
 
@@ -323,11 +325,38 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
        '>. I have been running for ' + uptime + ' on ' + hostname + '.');
   });
 
-controller.hears(['(daeus|doris|shyam)'], 'direct_message,direct_mention,mention', function(bot, message) {
+
+
+// Choose a random praise for a name.
+function randomPraise(name) {
+  // List of praises to be used after a name.
+  var praiseSuffixes = [
+    ' is awesome!',
+    ' is pretty cool!',
+    ' is fantastic!',
+    ' really makes my day!',
+    ' is extraordinary!',
+  ];
+
+  var index = Math.floor(Math.random() * praiseSuffixes.length);
+
+  return name + praiseSuffixes[index];
+}
+
+
+// Look for user names and praise them.
+controller.hears(['(doris|daeus|shyam)'], 'direct_message,direct_mention,mention', function(bot, message) {
   var name = message.match[1];
   // Capitalize first letter.
   name = name.charAt(0).toUpperCase() + name.slice(1);
-  bot.reply(message, name + ' is awesome!');
+  bot.reply(message, randomPraise(name));
+});
+
+
+// Look for user mentions and praise them, with mentions.
+controller.hears(['(what do you think of|do you like|how is) (<@U04AB2TDH>|<@U0K1YQ4AW>|<@U28LLA857>)'], 'direct_message,direct_mention,mention', function(bot, message) {
+  var userid = message.match[2];
+  bot.reply(message, randomPraise(userid));
 });
 
 
@@ -342,6 +371,35 @@ controller.hears(['Default Welcome Intent'], 'direct_message,direct_mention,ment
 
 controller.hears(['Happy new year'], 'direct_message,direct_mention,mention', apiai.hears, function(bot, message) {
   bot.reply(message, message.fulfillment.speech);
+});
+
+controller.hears(['search spotify for (.+)'], 'direct_message,direct_mention,mention', function(bot, message) {
+
+  // Search term e.g. 'love'
+  let query = message.match[1];
+  spotify.searchTracks(query, function(err, tracks) {
+    if (err) {
+      console.log('Error searching spotify', err);
+      return;
+    }
+
+    // Create a reply with attachments.
+    let replyWithAttachments = {
+      text: 'Found tracks with query "' + query + '":',
+      attachments: [],
+    };
+
+    tracks.forEach(function(track, index) {
+      // Add a new attachment.
+      replyWithAttachments.attachments.push({
+        title: track.artistName,
+        thumb_url: track.thumbUrl,
+        text: '<' + track.trackUrl + '|' + track.trackName + '>',
+      });
+    });
+
+    bot.reply(message, replyWithAttachments);
+  });
 });
 
 

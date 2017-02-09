@@ -26,5 +26,12 @@ exports = {
     instanceUrl: '',
     refreshToken: '',
   },
+
+  // Spotify.
+  spotify: {
+    clientId: '',
+    clientSecret: '',
+    redirectUri: 'http://www.example.com/callback',
+  },
 }
 
