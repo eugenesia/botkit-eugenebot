@@ -388,7 +388,7 @@ controller.hears(['(what do you think of|do you like|how is) (doris|daeus|shyam|
 
 
 // Look for user mentions and praise them, with mentions.
-controller.hears(['(what do you think of|do you like|how is) (<@U04AB2TDH>|<@U0K1YQ4AW>|<@U28LLA857>)'], 'direct_message,direct_mention,mention', function(bot, message) {
+controller.hears(['(what do you think of|do you like|how is) (<@U04AB2TDH>|<@U0K1YQ4AW>|<@U28LLA857>|<U04D8P9SK>)'], 'direct_message,direct_mention,mention', function(bot, message) {
   var userid = message.match[2];
   bot.reply(message, randomPraise(userid));
 });
