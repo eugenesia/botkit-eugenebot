@@ -33,6 +33,7 @@ function searchTracks(query, done) {
           trackName: item.name,
           thumbUrl: item.album.images[2].url,
           trackUrl: item.external_urls.spotify,
+          albumName: item.album.name,
         });
       });
 

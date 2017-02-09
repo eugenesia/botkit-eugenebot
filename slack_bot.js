@@ -393,8 +393,10 @@ controller.hears(['search spotify for (.+)'], 'direct_message,direct_mention,men
       // Add a new attachment.
       replyWithAttachments.attachments.push({
         title: track.artistName,
+        title_link: track.trackUrl,
         thumb_url: track.thumbUrl,
-        text: '<' + track.trackUrl + '|' + track.trackName + '>',
+        text: '<' + track.trackUrl + '|' + track.trackName + '>'
+          + '\n' + track.albumName,
       });
     });
 
