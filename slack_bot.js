@@ -69,6 +69,9 @@ This bot demonstrates many of the core features of Botkit:
 const config = require('./config');
 
 const os = require('os');
+// Help with decoding/encoding HTML entities.
+const entities = require('entities');
+
 const Botkit = require('./lib/Botkit.js');
 
 const spotify = require('./spotify');
@@ -429,8 +432,13 @@ cleverbot.create(function (err, session) {
 controller.hears('.*','direct_message,direct_mention,mention',function(bot,message) {  
   var msg = message.text;
   cleverbot.ask(msg, function (err, response) {
-    if (!err) {
-      bot.reply(message, response);
+
+    // Cleverbot replies with HTML entities such as '&ccedil;a va?'
+    let resp = entities.decodeHTML(response);
+
+    console.log('cleverbot response: ' + resp);
+    if (! err) {
+      bot.reply(message, resp);
     }
     else {
       console.log('cleverbot err: ' + err);
